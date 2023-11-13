@@ -1,0 +1,6 @@
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/hduoc2003/smart-contract-analyzer-frontend
+[submodule "backend"]
+	path = backend
+	url = https://github.com/hduoc2003/smart-contract-analyzer-backend
