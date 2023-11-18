@@ -1,0 +1,36 @@
+# Git
+**/.git
+**/.gitignore
+**/.gitattributes
+**/.gitmodules
+
+# Docker
+**/docker-compose.yml
+**/Dockerfile
+**/.docker
+**/.dockerignore
+
+# Byte-compiled / optimized / DLL files
+**/__pycache__/
+**/*.py[cod]
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environment
+# .env
+**/.env*
+**/venv/
+**/linux_venv/
+**/mythril_venv/
+**/win_venv/
+
+# VS Code
+**/.vscode/
+
+**/node_modules/
+**/npm-debug.log
+**/.next/
+frontend/out/
+**/*.swp
