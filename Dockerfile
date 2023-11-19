@@ -34,7 +34,10 @@ ARG SERVER_BASE_API
 ARG SERVER_BASE_URL
 ENV SERVER_BASE_API=${SERVER_BASE_API}
 ENV SERVER_BASE_URL=${SERVER_BASE_URL}
-RUN cd frontend && npm install && npm run build
+RUN cd frontend && \
+npm install && \
+npm run build && \
+find . -mindepth 1 -maxdepth 1 ! -name 'out' -exec rm -r {} \;
 RUN ln -sf /proc/self/fd/1 /var/log/apache2/access.log && \
 ln -sf /proc/self/fd/1 /var/log/apache2/error.log
 

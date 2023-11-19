@@ -1,4 +1,4 @@
-version: '1'
+version: '3.4'
 services:
   app:
     image: smart-contract-analyzer:nextjs-gunicorn-apache
@@ -9,7 +9,7 @@ services:
         SERVER_BASE_URL: http://127.0.0.1:88
     ports:
       - "88:80"
-      - "5000:5000"
+      # - "5000:5000"
     # restart: always #if make changes in this file
     volumes:
       # - .:/var/www/apache-flask
@@ -21,4 +21,4 @@ services:
     tty: true
     env_file:
       - ./backend/.env.production
-    command: /usr/local/bin/entrypoint.sh
+    # command: /usr/local/bin/entrypoint.sh
