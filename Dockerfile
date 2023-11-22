@@ -1,35 +1,42 @@
-FROM ubuntu:latest
-LABEL image.author="ppppHHHuuuu"
+FROM python:3.10.12
+EXPOSE 5000
 EXPOSE 80
 
-# Cài các package cần thiết
-RUN apt-get update && apt-get install -y apache2 \
-python3.10 \
-python3-pip \
-python3.10-venv \
+# Thiết lập thư mục làm việc
+WORKDIR /app
+
+# Cài package cơ bản
+RUN apt-get update && apt-get install -y \
 curl \
 nano \
 && apt-get clean \
 && apt-get autoremove \
 && rm -rf /var/lib/apt/lists/*
 
-ENV PATH="/opt/node-v18.17.0-linux-x64/bin:${PATH}"
-RUN curl https://nodejs.org/dist/v18.17.0/node-v18.17.0-linux-x64.tar.gz | tar xzf - -C /opt/
+# Cấu hình Nginx
+RUN apt update && apt install -y nginx
+RUN rm /etc/nginx/nginx.conf
+COPY ./nginx.conf /etc/nginx/
+# RUN ln -s /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled/
+RUN chown -R www-data:www-data /app
+RUN chmod -R 755 /app
 
-WORKDIR /var/www/apache-flask
-
+# Sao chép mã nguồn ứng dụng Flask vào container
 COPY . .
 
-# install requirement for BE
-RUN cd backend && pip install -r linux_requirements.txt \
+# Config BE
+# Cài package
+RUN cd backend && pip install --no-cache-dir -r linux_requirements.txt \
 # cài solc
-&& python3 ./production/docker_build_script.py\
-# cài venv cho mythril
-&& cd tools && python3 -m venv mythril_venv && ./mythril_venv/bin/pip install mythril
+&& python ./production/docker_build_script.py
+# Cài mythril
+RUN cd ./backend/tools && python -m venv mythril_venv && ./mythril_venv/bin/pip install mythril
 # cấp quyền ghi cho BE
-RUN chmod o+w /var/www
+# RUN chmod o+w /var/www
 
 # Install FE
+ENV PATH="/opt/node-v18.17.0-linux-x64/bin:${PATH}"
+RUN curl https://nodejs.org/dist/v18.17.0/node-v18.17.0-linux-x64.tar.gz | tar xzf - -C /opt/
 ARG SERVER_BASE_API
 ARG SERVER_BASE_URL
 ENV SERVER_BASE_API=${SERVER_BASE_API}
@@ -37,20 +44,8 @@ ENV SERVER_BASE_URL=${SERVER_BASE_URL}
 RUN cd frontend && \
 npm install && \
 npm run build && \
-find . -mindepth 1 -maxdepth 1 ! -name 'out' -exec rm -r {} \;
-RUN ln -sf /proc/self/fd/1 /var/log/apache2/access.log && \
-ln -sf /proc/self/fd/1 /var/log/apache2/error.log
-
-# config apache
-COPY ./apache-flask.conf /etc/apache2/sites-available/apache-flask.conf
-RUN a2dissite 000-default.conf
-RUN a2ensite apache-flask.conf
-RUN a2enmod headers
-RUN a2enmod rewrite
-RUN a2enmod proxy
-RUN a2enmod proxy_http
-RUN a2enmod proxy_wstunnel
-RUN echo 'ServerName localhost' >> /etc/apache2/apache2.conf
+# Xoá tất cả trừ thư mục out
+find . -mindepth 1 -maxdepth 1 ! -name 'out' -exec rm -rf {} \;
 
 # Khởi chạy container
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh

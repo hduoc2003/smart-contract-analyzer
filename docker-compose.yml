@@ -1,22 +1,21 @@
-version: '3.4'
+version: '3.3'
 services:
   app:
-    image: smart-contract-analyzer:nextjs-gunicorn-apache
-    build:
-      context: .
-      args:
-        SERVER_BASE_API: http://127.0.0.1:88/api/v1
-        SERVER_BASE_URL: http://127.0.0.1:88
+    image: hduoc2003/smart-contract-analyzer:test-deploy
+    # build:
+    #   context: .
+    #   args:
+    #     SERVER_BASE_API: http://127.0.0.1:88/api/v1
+    #     SERVER_BASE_URL: http://127.0.0.1:88/
     ports:
       - "88:80"
       # - "5000:5000"
     # restart: always #if make changes in this file
-    volumes:
-      # - .:/var/www/apache-flask
-      - ./apache-flask.conf:/etc/apache2/sites-available/apache-flask.conf
-      - ./backend/wsgi.ini:/var/www/apache-flask/backend/wsgi.ini
-      - ./entrypoint.sh:/usr/local/bin/entrypoint.sh
-      # - /var/run/docker.sock:/var/run/docker.sock
+    # volumes:
+      # - ./nginx.conf:/etc/nginx/sites-available/nginx.conf
+      # - ./entrypoint.sh:/usr/local/bin/entrypoint.sh
+      # - ./frontend/out:/app/frontend/out
+      # - ./backend:/app/backend
     stdin_open: true
     tty: true
     env_file:

@@ -1,10 +1,9 @@
 #!/bin/bash
 
-# Chạy apache
-apache2ctl start
+# Chạy nginx
+nginx
 
 # Chạy server
-gunicorn -c /var/www/apache-flask/backend/gunicorn.config.py --chdir /var/www/apache-flask/backend wsgi:app
-
+gunicorn -c /app/backend/gunicorn.config.py --chdir /app/backend wsgi:app
 
 # exec "$@"
